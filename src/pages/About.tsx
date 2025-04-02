@@ -86,7 +86,7 @@ export function About() {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-violet-400 hover:border-violet-300 transition-all duration-500 transform hover:scale-105 hover:shadow-lg hover:shadow-violet-500/20">
               <img 
-                src="/marrenai.jpg"
+                src="https://i.imgur.com/WD0KzkU.png"
                 alt="Marren Lane"
                 className="w-full h-full object-cover"
               />
