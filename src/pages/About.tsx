@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Navigation } from '../components/Navigation';
-import { ChevronRight, Building2, Star, Quote, ChevronLeft, Globe } from 'lucide-react';
+import { ChevronRight, Star, Quote, ChevronLeft, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function About() {
@@ -86,7 +86,7 @@ export function About() {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-violet-400 hover:border-violet-300 transition-all duration-500 transform hover:scale-105 hover:shadow-lg hover:shadow-violet-500/20">
               <img 
-                src="marren-miranti.jpg"
+                src="/marrenai.jpg"
                 alt="Marren Lane"
                 className="w-full h-full object-cover"
               />
