@@ -9,7 +9,7 @@ export function Portfolio() {
         <div 
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80")',
+            backgroundImage: 'url("https://images.unsplash.com/photo-1470723710355-95304d8aece4?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80")',
             backgroundPosition: 'center',
             backgroundSize: 'cover',
           }}
@@ -19,12 +19,12 @@ export function Portfolio() {
         
         <Navigation />
 
-        <div className="relative z-10 container mx-auto px-6 py-32">
+        <div className="relative z-10 container mx-auto px-6 py-20">
           <h1 className="heading-xl mb-6">
             Our Portfolio
           </h1>
           <p className="body-text text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl">
-            Explore our curated collection of premium investment opportunities and success stories.
+            Explore our collection of investment opportunities.
           </p>
         </div>
       </header>

@@ -66,6 +66,13 @@ export default function Home() {
               Get in Touch
               <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
+            <Link 
+              to="/portfolio" 
+              className="bg-gray-800 hover:bg-gray-700 px-8 py-4 rounded-lg flex items-center justify-center group border border-violet-500/30 hover:border-violet-400/50 transition-all duration-300"
+            >
+              Our Portfolio
+              <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+            </Link>
           </div>
         </div>
       </header>
