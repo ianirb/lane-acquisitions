@@ -22,6 +22,7 @@ export function Navigation() {
           <div className="hidden md:flex space-x-12">
             <Link to="/" className="nav-link hover-text tracking-wider text-sm uppercase">Home</Link>
             <Link to="/about" className="nav-link hover-text tracking-wider text-sm uppercase">About</Link>
+            <Link to="/portfolio" className="nav-link hover-text tracking-wider text-sm uppercase">Portfolio</Link>
             <Link to="/contact" className="nav-link hover-text tracking-wider text-sm uppercase">Contact</Link>
           </div>
 
@@ -56,6 +57,13 @@ export function Navigation() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
+              </Link>
+              <Link 
+                to="/portfolio" 
+                className="nav-link hover-text tracking-wider text-sm uppercase py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Portfolio
               </Link>
               <Link 
                 to="/contact" 
