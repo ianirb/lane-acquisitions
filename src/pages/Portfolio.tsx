@@ -38,7 +38,7 @@ export function Portfolio() {
               src="https://airtable.com/embed/appKpuo1dPnNhw7Fp/shrss5MK3v13Wf8cA" 
               frameBorder="0" 
               style={{ 
-                height: '533px',
+                height: '1200px',
                 background: 'transparent', 
                 border: '1px solid rgba(156, 163, 175, 0.2)'
               }}
