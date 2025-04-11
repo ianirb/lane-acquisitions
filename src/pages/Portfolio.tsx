@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigation } from '../components/Navigation';
 import { ChevronRight, Search, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,6 +14,11 @@ interface Deal {
   publicInfo: string;
 }
 
+interface AirtableRecord {
+  id: string;
+  get(field: string): unknown;
+}
+
 export function Portfolio() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedState, setSelectedState] = useState('All States');
@@ -21,35 +26,41 @@ export function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const base = new Airtable({
-    apiKey: import.meta.env.VITE_AIRTABLE_API_KEY
-  }).base(import.meta.env.VITE_AIRTABLE_BASE_ID);
-
   useEffect(() => {
     const fetchDeals = async () => {
       try {
-        const records = await base(import.meta.env.VITE_AIRTABLE_TABLE_ID)
-          .select()
+        const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
+        const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
+        const tableId = import.meta.env.VITE_AIRTABLE_TABLE_ID;
+
+        if (!apiKey || !baseId || !tableId) {
+          throw new Error('Missing required environment variables');
+        }
+
+        const base = new Airtable({ apiKey }).base(baseId);
+
+        const records = await base(tableId)
+          .select({
+            maxRecords: 100,
+            view: 'pag3YLMZPWpVCTq96'
+          })
           .all();
 
-        const formattedDeals = records.map(record => {
-          console.log('Raw asking price:', record.get('Asking')); // Debug log
-          return {
-            id: record.id,
-            state: record.get('State') as string || '',
-            city: record.get('City') as string || '',
-            dealType: record.get('Deal Type') as string || '',
-            needs: record.get('Needs') as string || '',
-            asking: String(record.get('Asking') || ''),
-            publicInfo: record.get('Public Info') as string || ''
-          };
-        });
+        const formattedDeals = records.map((record: AirtableRecord) => ({
+          id: record.id,
+          state: String(record.get('State') || ''),
+          city: String(record.get('City') || ''),
+          dealType: String(record.get('Deal Type') || ''),
+          needs: String(record.get('Needs') || ''),
+          asking: String(record.get('Asking') || ''),
+          publicInfo: String(record.get('Public Info') || '')
+        }));
 
         setDeals(formattedDeals);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching deals:', err);
-        setError('Failed to load investment opportunities');
+        setError(err instanceof Error ? err.message : 'Failed to load investment opportunities');
         setLoading(false);
       }
     };
@@ -69,7 +80,6 @@ export function Portfolio() {
   const formatPrice = (asking: string) => {
     if (!asking) return 'Contact for Details';
     
-    // If price is already a number (as a string), parse it directly
     const numericValue = Number(asking);
     if (!isNaN(numericValue)) {
       return new Intl.NumberFormat('en-US', {
@@ -80,7 +90,6 @@ export function Portfolio() {
       }).format(numericValue).replace('$', '');
     }
 
-    // Try to extract numeric value from string (e.g., "$1,000,000" -> 1000000)
     const cleanedPrice = asking.replace(/[^0-9.]/g, '');
     const parsedPrice = parseFloat(cleanedPrice);
 
@@ -98,7 +107,6 @@ export function Portfolio() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Hero Section */}
       <header className="relative">
         <div 
           className="absolute inset-0 z-0"
@@ -123,10 +131,8 @@ export function Portfolio() {
         </div>
       </header>
 
-      {/* Portfolio Section */}
       <section className="py-20 bg-gray-800">
         <div className="container mx-auto px-6">
-          {/* Search and Filter */}
           <div className="mb-12 flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <div className="relative">
@@ -155,7 +161,6 @@ export function Portfolio() {
             </div>
           </div>
 
-          {/* Loading State */}
           {loading && (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-400 mx-auto mb-4"></div>
@@ -163,40 +168,35 @@ export function Portfolio() {
             </div>
           )}
 
-          {/* Error State */}
           {error && (
             <div className="text-center py-12">
               <p className="text-red-400">{error}</p>
+              <p className="text-gray-400 mt-2">Please check your environment variables and try again.</p>
             </div>
           )}
 
-          {/* Deals Grid */}
           {!loading && !error && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredDeals.map((deal) => (
                 <div key={deal.id} className="glass-card rounded-xl overflow-hidden hover-card">
                   <div className="p-6">
-                    {/* Deal Type Badge */}
                     <div className="mb-4">
                       <span className="inline-block px-3 py-1 bg-violet-500/20 text-violet-400 rounded-full text-sm font-medium">
                         {deal.dealType}
                       </span>
                     </div>
                     
-                    {/* Location */}
                     <div className="flex items-center gap-2 mb-6 text-gray-300">
                       <MapPin className="w-4 h-4 text-violet-400 flex-shrink-0" />
                       <span className="text-sm">{deal.city}, {deal.state}</span>
                     </div>
 
                     <div className="space-y-6">
-                      {/* Needs Section */}
                       <div>
                         <p className="text-sm font-medium text-gray-400 mb-2">Investment Needs</p>
                         <p className="text-white">{deal.needs}</p>
                       </div>
 
-                      {/* Listed Price */}
                       <div>
                         <p className="text-sm font-medium text-gray-400 mb-2">Listed Price</p>
                         <div className="flex items-center gap-1">
@@ -206,14 +206,12 @@ export function Portfolio() {
                         </div>
                       </div>
 
-                      {/* Public Information */}
                       <div>
                         <p className="text-sm font-medium text-gray-400 mb-2">Additional Information</p>
                         <p className="text-gray-300 text-sm line-clamp-3">{deal.publicInfo}</p>
                       </div>
                     </div>
 
-                    {/* Action Button */}
                     <div className="mt-8">
                       <Link
                         to="/contact"
