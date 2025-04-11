@@ -26,46 +26,53 @@ export function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDeals = async () => {
-      try {
-        const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
-        const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
-        const tableId = import.meta.env.VITE_AIRTABLE_TABLE_ID;
+  const fetchDeals = async () => {
+    try {
+      const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
+      const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
+      const tableId = import.meta.env.VITE_AIRTABLE_TABLE_ID;
 
-        if (!apiKey || !baseId || !tableId) {
-          throw new Error('Missing required environment variables');
-        }
-
-        const base = new Airtable({ apiKey }).base(baseId);
-
-        const records = await base(tableId)
-          .select({
-            maxRecords: 100,
-            view: 'pag3YLMZPWpVCTq96'
-          })
-          .all();
-
-        const formattedDeals = records.map((record: AirtableRecord) => ({
-          id: record.id,
-          state: String(record.get('State') || ''),
-          city: String(record.get('City') || ''),
-          dealType: String(record.get('Deal Type') || ''),
-          needs: String(record.get('Needs') || ''),
-          asking: String(record.get('Asking') || ''),
-          publicInfo: String(record.get('Public Info') || '')
-        }));
-
-        setDeals(formattedDeals);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching deals:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load investment opportunities');
-        setLoading(false);
+      if (!apiKey || !baseId || !tableId) {
+        throw new Error('Missing required environment variables');
       }
-    };
 
+      const base = new Airtable({ apiKey }).base(baseId);
+
+      const records = await base(tableId)
+        .select({
+          maxRecords: 100,
+          view: 'pag3YLMZPWpVCTq96'
+        })
+        .all();
+
+      const formattedDeals = records.map((record: AirtableRecord) => ({
+        id: record.id,
+        state: String(record.get('State') || ''),
+        city: String(record.get('City') || ''),
+        dealType: String(record.get('Deal Type') || ''),
+        needs: String(record.get('Needs') || ''),
+        asking: String(record.get('Asking') || ''),
+        publicInfo: String(record.get('Public Info') || '')
+      }));
+
+      setDeals(formattedDeals);
+      setLoading(false);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching deals:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load investment opportunities');
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchDeals();
+    
+    // Set up polling every 30 seconds
+    const pollInterval = setInterval(fetchDeals, 30000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(pollInterval);
   }, []);
 
   const states = ['All States', ...new Set(deals.map(deal => deal.state).filter(Boolean).sort())];
